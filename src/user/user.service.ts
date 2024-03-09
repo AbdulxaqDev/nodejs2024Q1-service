@@ -22,7 +22,11 @@ export class UserService {
   }
 
   update(id: string, UpdatePasswordDto: UpdatePasswordDto) {
-    return `This action updates a #${id} user`;
+    return UsersDB.find(user => {
+      if(user.id === id){
+        
+      }
+    });
   }
 
   remove(id: number) {

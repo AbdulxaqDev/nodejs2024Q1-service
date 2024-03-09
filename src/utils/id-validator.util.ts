@@ -1,4 +1,3 @@
-import { Response } from 'express';
 import { tResponse } from 'src/user/entities/user.entity';
 import { validate } from 'uuid';
 
