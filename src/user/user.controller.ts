@@ -18,6 +18,7 @@ import { Response } from 'express';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-user-password.dto';
+import { isValidId } from 'src/utils/id-validator.util';
 
 @Controller('user')
 export class UserController {
@@ -44,7 +45,27 @@ export class UserController {
 
   @Get(':id')
   findOne(@Param('id') id: string, @Res() res: Response) {
-  
+    const isValidId = validate(id);
+    const user = this.userService.findOne(id);
+
+    if (isValidId && user) {
+      return res.status(HttpStatus.OK).json({
+        statusCode: HttpStatus.OK,
+        message: [this.userService.findOne(id)],
+        error: null,
+      });
+    } else if (isValidId) {
+      return res.status(HttpStatus.NOT_FOUND).json({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: ['User Not Found'],
+        error: 'Not Found',
+      });
+    }
+    return res.status(HttpStatus.BAD_REQUEST).json({
+      statusCode: 400,
+      message: ['Invalid User ID'],
+      error: 'Back Request',
+    });
   }
 
   @Patch(':id')
