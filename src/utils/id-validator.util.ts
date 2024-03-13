@@ -1,4 +1,4 @@
-import { tResponse } from 'src/user/entities/user.entity';
+import { tResponse } from 'src/common/user/entities/user.entity';
 import { validate } from 'uuid';
 
 export function isValidId(id: string): tResponse {

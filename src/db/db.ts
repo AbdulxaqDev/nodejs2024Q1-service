@@ -1,3 +1,3 @@
-import { User } from 'src/user/entities/user.entity';
+import { User } from 'src/common/user/entities/user.entity';
 
 export const UsersDB: User[] = [];

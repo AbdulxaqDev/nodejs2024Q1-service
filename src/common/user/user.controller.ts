@@ -9,6 +9,7 @@ import {
   HttpCode,
   Header,
   HttpStatus,
+  HttpException,
   Res,
 } from '@nestjs/common';
 
@@ -19,6 +20,7 @@ import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-user-password.dto';
 import { response } from 'src/utils/response.util';
+import { UsersDB } from 'src/db/db';
 
 @Controller('user')
 export class UserController {
@@ -47,11 +49,25 @@ export class UserController {
   @Header('Content-Type', 'application/json')
   findOne(@Param('id') id: string, @Res() res: Response) {
     const isValidId = validate(id);
-    const user = this.userService.findOne(id);
+    if (isValidId) {
+      const user = this.userService.findOne(id);
+      if (isValidId && user) {
+        return response(HttpStatus.OK, user, null, res);
+      } else if (isValidId) {
+        return response(
+          HttpStatus.NOT_FOUND,
+          'User Not Found',
+          'Not Found',
+          res,
+        );
+      }
+    }
 
-    if (isValidId && user) return response(HttpStatus.OK, user, null, res);
-    else if (isValidId)
-      return response(HttpStatus.NOT_FOUND, 'User Not Found', 'Not Found', res);
+    // if (isValidId && this.userService.findOne(id)) {
+    //   return response(HttpStatus.OK, user, null, res);
+    // } else if (isValidId) {
+    //   return response(HttpStatus.NOT_FOUND, 'User Not Found', 'Not Found', res);
+    // }
 
     return response(
       HttpStatus.BAD_REQUEST,
@@ -68,18 +84,20 @@ export class UserController {
     @Res() res: Response,
   ) {
     const isValidId = validate(id);
-    const user = this.userService.findOne(id);
+    const user = UsersDB.find((user) => user.id === id);
 
     if (isValidId && user.password === updatePasswordDto.oldPassword) {
-      this.userService.update(id, updatePasswordDto);
-      return response(HttpStatus.OK, user, null, res);
-    } else if (isValidId && user.password !== updatePasswordDto.oldPassword)
+      const updatedUser = this.userService.update(id, updatePasswordDto);
+
+      return response(HttpStatus.OK, updatedUser, null, res);
+    } else if (isValidId && user.password !== updatePasswordDto.oldPassword) {
       return response(HttpStatus.FORBIDDEN, 'Wrong Password', 'Forbidden', res);
+    }
 
     return response(
       HttpStatus.BAD_REQUEST,
       'Invalid User ID',
-      'Back Request',
+      'Bad Request',
       res,
     );
   }
