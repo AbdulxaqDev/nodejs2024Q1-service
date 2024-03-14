@@ -1,15 +1,14 @@
 import { AlbumsDB, ArtistsDB, TracksDB, UsersDB } from 'src/db/db';
 
 export enum Endpoints {
-  user = 'user',
-  artist = 'artist',
-  track = 'track',
-  album = 'album',
+  USER = 'user',
+  ARTIST = 'artist',
+  TRACK = 'track',
+  ALBUM = 'album',
 }
-
-export const DBs = {
-  user: UsersDB,
-  artist: ArtistsDB,
-  track: TracksDB,
-  album: AlbumsDB,
+export const DBs: Record<Endpoints, any[]> = {
+  [Endpoints.USER]: UsersDB,
+  [Endpoints.ARTIST]: ArtistsDB,
+  [Endpoints.TRACK]: TracksDB,
+  [Endpoints.ALBUM]: AlbumsDB,
 };
