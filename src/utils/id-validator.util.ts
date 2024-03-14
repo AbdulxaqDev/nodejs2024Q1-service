@@ -6,7 +6,8 @@ import { Response } from 'express';
 
 export function validateId(id: string, endPoint: Endpoints, res: Response) {
   if (validate(id)) {
-    const item = DBs[endPoint].find((i) => i.id === id);
+    const db = DBs[endPoint];
+    const item = db.find((i) => i.id === id);
     if (item) {
       return item;
     } else {
