@@ -76,9 +76,7 @@ export class UserController {
     @Body() updatePasswordDto: UpdatePasswordDto,
     @Res() res: Response,
   ) {
-    const isValidId = validate(id);
-
-    if (isValidId) {
+    if (validate(id)) {
       const user = UsersDB.find((_) => _.id === id);
 
       if (user) {
