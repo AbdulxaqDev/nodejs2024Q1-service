@@ -9,7 +9,6 @@ import {
   HttpCode,
   Header,
   HttpStatus,
-  HttpException,
   Res,
 } from '@nestjs/common';
 
@@ -63,12 +62,6 @@ export class UserController {
       }
     }
 
-    // if (isValidId && this.userService.findOne(id)) {
-    //   return response(HttpStatus.OK, user, null, res);
-    // } else if (isValidId) {
-    //   return response(HttpStatus.NOT_FOUND, 'User Not Found', 'Not Found', res);
-    // }
-
     return response(
       HttpStatus.BAD_REQUEST,
       'Invalid User ID',
@@ -103,7 +96,26 @@ export class UserController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.userService.remove(+id);
+  remove(@Param('id') id: string, @Res() res: Response) {
+    if (validate(id)) {
+      const user = UsersDB.find((u) => u.id === id);
+      if (user) {
+        this.userService.remove(id);
+        return response(HttpStatus.NO_CONTENT, 'User deleted', null, res);
+      } else {
+        return response(
+          HttpStatus.NOT_FOUND,
+          'User Not Found',
+          'Not Found',
+          res,
+        );
+      }
+    }
+    return response(
+      HttpStatus.BAD_REQUEST,
+      'Invalid User ID',
+      'Back Request',
+      res,
+    );
   }
 }

@@ -8,7 +8,7 @@ export function response(
 ) {
   return res.status(statusCode).send({
     statusCode,
-    message: [message],
+    message,
     error,
   });
 }

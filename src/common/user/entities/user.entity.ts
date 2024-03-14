@@ -9,6 +9,6 @@ export interface User {
 
 export interface tResponse {
   statusCode: number;
-  message: string[];
+  message: string;
   error: string;
 }

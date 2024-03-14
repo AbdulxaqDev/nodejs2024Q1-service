@@ -34,6 +34,7 @@ export class UserService {
     const { password, ...userWithoutPassword } = UsersDB.find((user) => {
       if (user.id === id) {
         user.password = updatePasswordDto.newPassword;
+        user.updatedAt = Date.now();
         user.version++;
         return user;
       }
@@ -41,7 +42,7 @@ export class UserService {
     return userWithoutPassword;
   }
 
-  remove(id: number) {
+  remove(id: string) {
     return `This action removes a #${id} user`;
   }
 }
