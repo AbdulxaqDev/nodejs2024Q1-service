@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-user-password.dto';
 import { UsersDB } from 'src/db/db';
+import { User } from './entities/user.entity';
 
 @Injectable()
 export class UserService {
@@ -42,7 +43,7 @@ export class UserService {
     return userWithoutPassword;
   }
 
-  remove(id: string) {
-    return `This action removes a #${id} user`;
+  remove(user: User) {
+    UsersDB.splice(UsersDB.indexOf(user), 1);
   }
 }
