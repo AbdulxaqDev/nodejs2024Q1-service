@@ -33,14 +33,11 @@ export class UserService {
   }
 
   update(id: string, updatePasswordDto: UpdatePasswordDto) {
-    const { password, ...userWithoutPassword } = UsersDB.find((user) => {
-      if (user.id === id) {
-        user.password = updatePasswordDto.newPassword;
-        user.updatedAt = Date.now();
-        user.version++;
-        return user;
-      }
-    });
+    const user = UsersDB.find((user) => user.id === id);
+    user.password = updatePasswordDto.newPassword;
+    user.updatedAt = Date.now();
+    user.version++;
+    const { password, ...userWithoutPassword } = user;
     return userWithoutPassword;
   }
 
