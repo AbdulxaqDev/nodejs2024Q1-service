@@ -1,9 +1,8 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 import { DBs, Endpoints } from 'src/entities/common.entity';
-import { response } from 'src/utils/response.util';
-import { Response } from 'express';
+import { Artist } from './entities/artist.entity';
 
 @Injectable()
 export class ArtistService {
@@ -31,7 +30,8 @@ export class ArtistService {
     return artist;
   }
 
-  remove(id: string) {
-    return `This action removes a #${id} artist`;
+  remove(artist: Artist) {
+    const artistsDb = DBs[Endpoints.ARTIST];
+    artistsDb.splice(artistsDb.indexOf(artist), 1);
   }
 }
