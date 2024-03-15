@@ -6,10 +6,9 @@ import { TrackModule } from './common/track/track.module';
 import { ArtistModule } from './common/artist/artist.module';
 import { AlbumModule } from './common/album/album.module';
 import { FavsModule } from './common/favs/favs.module';
-import { TesterModule } from './tester/tester.module';
 
 @Module({
-  imports: [UserModule, TrackModule, ArtistModule, AlbumModule, FavsModule, TesterModule],
+  imports: [UserModule, TrackModule, ArtistModule, AlbumModule, FavsModule],
   controllers: [AppController],
   providers: [AppService],
 })
