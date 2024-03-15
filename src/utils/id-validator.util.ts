@@ -13,7 +13,7 @@ export function validateId(id: string, endPoint: Endpoints, res: Response) {
     } else {
       response(
         HttpStatus.NOT_FOUND,
-        `${endPoint.toUpperCase} Not Found`,
+        `${endPoint.toUpperCase()} Not Found`,
         'Not Found',
         res,
       );
@@ -21,8 +21,8 @@ export function validateId(id: string, endPoint: Endpoints, res: Response) {
   } else {
     response(
       HttpStatus.BAD_REQUEST,
-      `Invalid ${endPoint.toUpperCase} ID`,
-      'Back Request',
+      `Invalid ${endPoint.toUpperCase()} ID`,
+      'Bad Request',
       res,
     );
   }
