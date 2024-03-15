@@ -21,7 +21,7 @@ import { response } from 'src/utils/response.util';
 import { validateId } from 'src/utils/id-validator.util';
 import { Endpoints } from 'src/entities/common.entity';
 
-@Controller('user')
+@Controller(Endpoints.USER)
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
