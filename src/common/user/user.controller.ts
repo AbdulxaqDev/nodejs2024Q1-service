@@ -3,13 +3,13 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   HttpCode,
   Header,
   HttpStatus,
   Res,
+  Put,
 } from '@nestjs/common';
 
 import { Response } from 'express';
@@ -28,13 +28,9 @@ export class UserController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   @Header('Content-Type', 'application/json')
-  create(@Body() createUserDto: CreateUserDto) {
+  create(@Body() createUserDto: CreateUserDto, @Res() res: Response) {
     const createdUser = this.userService.create(createUserDto);
-    return {
-      statusCode: HttpStatus.CREATED,
-      message: [createdUser],
-      error: null,
-    };
+    return response(HttpStatus.CREATED, createdUser, res);
   }
 
   @Get()
@@ -51,11 +47,11 @@ export class UserController {
 
     if (isValidIdAndUser) {
       const { password, ...userWithoutPassword } = isValidIdAndUser;
-      return response(HttpStatus.OK, userWithoutPassword, null, res);
+      return response(HttpStatus.OK, userWithoutPassword, res);
     }
   }
 
-  @Patch(':id')
+  @Put(':id')
   update(
     @Param('id') id: string,
     @Body() updatePasswordDto: UpdatePasswordDto,
@@ -66,14 +62,9 @@ export class UserController {
     if (isValidIdAndUser) {
       if (isValidIdAndUser.password === updatePasswordDto.oldPassword) {
         const updatedUser = this.userService.update(id, updatePasswordDto);
-        return response(HttpStatus.OK, updatedUser, null, res);
+        return response(HttpStatus.OK, updatedUser, res);
       } else if (isValidIdAndUser.password !== updatePasswordDto.oldPassword) {
-        return response(
-          HttpStatus.FORBIDDEN,
-          'Wrong Password',
-          'Forbidden',
-          res,
-        );
+        return response(HttpStatus.FORBIDDEN, 'Wrong Password', res);
       }
     }
   }
@@ -84,7 +75,7 @@ export class UserController {
 
     if (isValidIdAndUser) {
       this.userService.remove(isValidIdAndUser);
-      return response(HttpStatus.NO_CONTENT, 'User deleted', null, res);
+      return response(HttpStatus.NO_CONTENT, 'User deleted', res);
     }
   }
 }

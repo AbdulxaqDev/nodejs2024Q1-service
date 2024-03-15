@@ -3,13 +3,13 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   HttpStatus,
   HttpCode,
   Header,
   Res,
+  Put,
 } from '@nestjs/common';
 import { ArtistService } from './artist.service';
 import { CreateArtistDto } from './dto/create-artist.dto';
@@ -26,13 +26,9 @@ export class ArtistController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   @Header('Content-Type', 'application/json')
-  create(@Body() createArtistDto: CreateArtistDto) {
+  create(@Body() createArtistDto: CreateArtistDto, @Res() res: Response) {
     const createdArtist = this.artistService.create(createArtistDto);
-    return {
-      statusCode: HttpStatus.CREATED,
-      message: createdArtist,
-      error: null,
-    };
+    return response(HttpStatus.CREATED, createdArtist, res);
   }
 
   @Get()
@@ -40,11 +36,7 @@ export class ArtistController {
   @Header('Content-Type', 'application/json')
   findAll() {
     const artists = this.artistService.findAll();
-    return {
-      statusCode: HttpStatus.OK,
-      message: artists,
-      error: null,
-    };
+    return artists;
   }
 
   @Get(':id')
@@ -53,11 +45,11 @@ export class ArtistController {
     const isValidIdAndArtist = validateId(id, Endpoints.ARTIST, res);
 
     if (isValidIdAndArtist) {
-      return response(HttpStatus.OK, isValidIdAndArtist, null, res);
+      return response(HttpStatus.OK, isValidIdAndArtist, res);
     }
   }
 
-  @Patch(':id')
+  @Put(':id')
   update(
     @Param('id') id: string,
     @Body() updateArtistDto: UpdateArtistDto,
@@ -66,7 +58,7 @@ export class ArtistController {
     const isValidIdAndArtist = validateId(id, Endpoints.ARTIST, res);
     if (isValidIdAndArtist) {
       const updatedArtist = this.artistService.update(id, updateArtistDto);
-      return response(HttpStatus.OK, updatedArtist, null, res);
+      return response(HttpStatus.OK, updatedArtist, res);
     }
   }
 
@@ -76,7 +68,7 @@ export class ArtistController {
 
     if (isValidIdAndArtist) {
       this.artistService.remove(isValidIdAndArtist);
-      return response(HttpStatus.NO_CONTENT, 'User deleted', null, res);
+      return response(HttpStatus.NO_CONTENT, null, res);
     }
   }
 }

@@ -14,7 +14,6 @@ export function validateId(id: string, endPoint: Endpoints, res: Response) {
       response(
         HttpStatus.NOT_FOUND,
         `${endPoint.toUpperCase()} Not Found`,
-        'Not Found',
         res,
       );
     }
@@ -22,7 +21,6 @@ export function validateId(id: string, endPoint: Endpoints, res: Response) {
     response(
       HttpStatus.BAD_REQUEST,
       `Invalid ${endPoint.toUpperCase()} ID`,
-      'Bad Request',
       res,
     );
   }

@@ -3,6 +3,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-user-password.dto';
 import { UsersDB } from 'src/db/db';
 import { User } from './entities/user.entity';
+import { DBs, Endpoints } from 'src/entities/common.entity';
 
 @Injectable()
 export class UserService {
@@ -12,7 +13,7 @@ export class UserService {
       login,
       password,
     );
-    UsersDB.push({ password: uPassword, ...userWithoutPassword });
+    DBs[Endpoints.USER].push({ password: uPassword, ...userWithoutPassword });
     return { ...userWithoutPassword };
   }
 
