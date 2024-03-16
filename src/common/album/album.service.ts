@@ -1,23 +1,35 @@
 import { Injectable } from '@nestjs/common';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
+import { DBs, Endpoints } from 'src/entities/common.entity';
 
 @Injectable()
 export class AlbumService {
   create(createAlbumDto: CreateAlbumDto) {
-    return 'This action adds a new album';
+    const { name, year, artistId } = createAlbumDto;
+    const newAlbum = new CreateAlbumDto(name, year, artistId);
+
+    DBs[Endpoints.ALBUM].push(newAlbum);
+    return newAlbum;
   }
 
   findAll() {
-    return `This action returns all album`;
+    return DBs[Endpoints.ALBUM];
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} album`;
+  findOne(id: string) {
+    const album = DBs[Endpoints.ALBUM].find((a) => a.id === id);
+    return album;
   }
 
-  update(id: number, updateAlbumDto: UpdateAlbumDto) {
-    return `This action updates a #${id} album`;
+  update(id: string, updateAlbumDto: UpdateAlbumDto) {
+    // const album = this.findOne(id);
+    // album.name = updateAlbumDto.name;
+    // album.year = updateAlbumDto.year;
+    // album.artistId = updateAlbumDto.artistId;
+    let album = this.findOne(id);
+    album = updateAlbumDto;
+    return album;
   }
 
   remove(id: number) {
