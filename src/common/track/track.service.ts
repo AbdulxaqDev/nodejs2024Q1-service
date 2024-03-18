@@ -1,15 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
+import { DBs, Endpoints } from 'src/entities/common.entity';
 
 @Injectable()
 export class TrackService {
   create(createTrackDto: CreateTrackDto) {
-    return 'This action adds a new track';
+    const { name, artistId, albumId, duration } = createTrackDto;
+    const newTrack = new CreateTrackDto(name, artistId, albumId, duration);
+    DBs[Endpoints.TRACK].push(newTrack);
+    return newTrack;
   }
 
   findAll() {
-    return `This action returns all track`;
+    return DBs[Endpoints.TRACK];
   }
 
   findOne(id: number) {
