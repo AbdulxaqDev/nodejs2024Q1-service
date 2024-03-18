@@ -8,6 +8,7 @@ import {
   Delete,
   HttpStatus,
   Res,
+  Put,
 } from '@nestjs/common';
 import { TrackService } from './track.service';
 import { CreateTrackDto } from './dto/create-track.dto';
@@ -17,7 +18,7 @@ import { Response } from 'express';
 import { validateId } from 'src/utils/id-validator.util';
 import { Endpoints } from 'src/entities/common.entity';
 
-@Controller('track')
+@Controller(Endpoints.TRACK)
 export class TrackController {
   constructor(private readonly trackService: TrackService) {}
 
@@ -41,13 +42,30 @@ export class TrackController {
     }
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTrackDto: UpdateTrackDto) {
-    return this.trackService.update(+id, updateTrackDto);
+  @Put(':id')
+  update(
+    @Param('id') id: string,
+    @Body() updateTrackDto: UpdateTrackDto,
+    @Res() res: Response,
+  ) {
+    const isValidIdAndTrack = validateId(id, Endpoints.TRACK, res);
+
+    if (isValidIdAndTrack) {
+      return response(
+        HttpStatus.OK,
+        this.trackService.update(id, updateTrackDto),
+        res,
+      );
+    }
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.trackService.remove(+id);
+  remove(@Param('id') id: string, @Res() res: Response) {
+    const isValidIdAndTrack = validateId(id, Endpoints.TRACK, res);
+
+    if (isValidIdAndTrack) {
+      this.trackService.remove(isValidIdAndTrack);
+      return response(HttpStatus.NO_CONTENT, 'User deleted', res);
+    }
   }
 }
