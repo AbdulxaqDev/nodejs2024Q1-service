@@ -63,16 +63,6 @@ export class FavsController {
     return response(HttpStatus.OK, this.favsService.findAll(), res);
   }
 
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.favsService.findOne(+id);
-  // }
-
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateFavDto: UpdateFavDto) {
-  //   return this.favsService.update(+id, updateFavDto);
-  // }
-
   @Delete(':id')
   removeTrack(@Param('id') id: string, @Res() res: Response) {
     const isValidIdAndTrack = validateId(id, Endpoints.TRACK, res);
