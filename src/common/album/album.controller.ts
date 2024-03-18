@@ -23,11 +23,10 @@ export class AlbumController {
 
   @Post()
   create(@Body() createAlbumDto: CreateAlbumDto, @Res() res: Response) {
-    const isValidIdAndArtist = validateId(
-      createAlbumDto.artistId,
-      Endpoints.ARTIST,
-      res,
-    );
+    const isValidIdAndArtist =
+      createAlbumDto.artistId === null
+        ? true
+        : validateId(createAlbumDto.artistId, Endpoints.ARTIST, res);
 
     if (isValidIdAndArtist) {
       const createdAlbum = this.albumService.create(createAlbumDto);
@@ -54,20 +53,20 @@ export class AlbumController {
     @Res() res: Response,
   ) {
     const isValidIdAndAlbum = validateId(id, Endpoints.ALBUM, res);
-    const isValidIdAndArtist = validateId(
-      updateAlbumDto.artistId,
-      Endpoints.ARTIST,
-      res,
-    );
 
-    if (isValidIdAndAlbum && isValidIdAndArtist) {
+    if (isValidIdAndAlbum) {
       const updatedAlbum = this.albumService.update(id, updateAlbumDto);
       return response(HttpStatus.OK, updatedAlbum, res);
     }
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.albumService.remove(+id);
+  remove(@Param('id') id: string, @Res() res: Response) {
+    const isValidIdAndAlbum = validateId(id, Endpoints.ALBUM, res);
+
+    if (isValidIdAndAlbum) {
+      this.albumService.remove(isValidIdAndAlbum);
+      return response(HttpStatus.NO_CONTENT, null, res);
+    }
   }
 }

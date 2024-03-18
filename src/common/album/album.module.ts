@@ -5,6 +5,6 @@ import { IdValidator } from './validators/artist-id.validator';
 
 @Module({
   controllers: [AlbumController],
-  providers: [AlbumService, IdValidator]
+  providers: [AlbumService, IdValidator],
 })
 export class AlbumModule {}

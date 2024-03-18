@@ -20,6 +20,7 @@ export class UserService {
   findAll() {
     const users = UsersDB.map((user) => {
       const { password, ...userWithoutPassword } = user;
+      password;
       return { ...userWithoutPassword };
     });
     return JSON.stringify(users);

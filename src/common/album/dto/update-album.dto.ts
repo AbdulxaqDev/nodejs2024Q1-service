@@ -1,5 +1,4 @@
-import { IsNotEmpty, IsString, IsNumber, Validate } from 'class-validator';
-import { IdValidator } from '../validators/artist-id.validator';
+import { IsNotEmpty, IsString, IsNumber } from 'class-validator';
 
 export class UpdateAlbumDto {
   @IsString()
@@ -8,10 +7,7 @@ export class UpdateAlbumDto {
 
   @IsNumber()
   @IsNotEmpty()
-  year: string;
+  year: number;
 
-  @IsString()
-  @IsNotEmpty()
-  @Validate(IdValidator)
-  artistId: string;
+  artistId: string | null;
 }

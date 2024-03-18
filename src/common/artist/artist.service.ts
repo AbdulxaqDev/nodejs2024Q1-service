@@ -3,6 +3,8 @@ import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 import { DBs, Endpoints } from 'src/entities/common.entity';
 import { Artist } from './entities/artist.entity';
+import { Album } from '../album/entities/album.entity';
+import { Track } from '../track/entities/track.entity';
 
 @Injectable()
 export class ArtistService {
@@ -32,6 +34,16 @@ export class ArtistService {
 
   remove(artist: Artist) {
     const artistsDb = DBs[Endpoints.ARTIST];
+    const artistFromAlbum: Album = DBs[Endpoints.ALBUM].find(
+      (album) => album.artistId === artist.id,
+    );
+    const artistFromTrack: Track = DBs[Endpoints.TRACK].find(
+      (track) => track.artistId === artist.id,
+    );
+
+    if (artistFromAlbum) artistFromAlbum.artistId = null;
+    if (artistFromTrack) artistFromTrack.artistId = null;
+
     artistsDb.splice(artistsDb.indexOf(artist), 1);
   }
 }

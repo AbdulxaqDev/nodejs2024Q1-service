@@ -4,7 +4,11 @@ import { response } from './response.util';
 import { HttpStatus } from '@nestjs/common';
 import { Response } from 'express';
 
-export function validateId(id: string, endPoint: Endpoints, res: Response) {
+export function validateId(
+  id: string | null,
+  endPoint: Endpoints,
+  res: Response,
+) {
   if (validate(id)) {
     const db = DBs[endPoint];
     const item = db.find((i) => i.id === id);

@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 import { DBs, Endpoints } from 'src/entities/common.entity';
+import { Album } from './entities/album.entity';
+import { Track } from '../track/entities/track.entity';
 
 @Injectable()
 export class AlbumService {
@@ -17,22 +19,30 @@ export class AlbumService {
     return DBs[Endpoints.ALBUM];
   }
 
-  findOne(id: string) {
+  findOne(id: string): Album {
     const album = DBs[Endpoints.ALBUM].find((a) => a.id === id);
     return album;
   }
 
   update(id: string, updateAlbumDto: UpdateAlbumDto) {
-    // const album = this.findOne(id);
-    // album.name = updateAlbumDto.name;
-    // album.year = updateAlbumDto.year;
-    // album.artistId = updateAlbumDto.artistId;
-    let album = this.findOne(id);
-    album = updateAlbumDto;
+    const { name, year, artistId } = updateAlbumDto;
+    const album = this.findOne(id);
+    album.name = name;
+    album.year = year;
+    album.artistId = artistId;
+
     return album;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} album`;
+  remove(album: Album) {
+    const albumDb = DBs[Endpoints.ALBUM];
+
+    const artistFromTrack: Track = DBs[Endpoints.TRACK].find(
+      (track) => track.albumId === album.id,
+    );
+
+    if (artistFromTrack) artistFromTrack.albumId = null;
+
+    albumDb.splice(albumDb.indexOf(album), 1);
   }
 }
