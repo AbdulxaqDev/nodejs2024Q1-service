@@ -6,6 +6,7 @@ export enum Endpoints {
   TRACK = 'track',
   ALBUM = 'album',
 }
+
 export const DBs: Record<Endpoints, any[]> = {
   [Endpoints.USER]: UsersDB,
   [Endpoints.ARTIST]: ArtistsDB,

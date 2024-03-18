@@ -1,26 +1,61 @@
 import { Injectable } from '@nestjs/common';
-import { CreateFavDto } from './dto/create-fav.dto';
-import { UpdateFavDto } from './dto/update-fav.dto';
+import { FavAlbumsDB, FavArtistsDB, FavTracksDB } from 'src/db/db';
+import { DBs, Endpoints } from 'src/entities/common.entity';
 
 @Injectable()
 export class FavsService {
-  create(createFavDto: CreateFavDto) {
-    return 'This action adds a new fav';
+  createTrack(id: string) {
+    FavTracksDB.push(id);
+    console.log('adding track to fav: ', id);
+  }
+
+  createArtist(id: string) {
+    FavArtistsDB.push(id);
+    console.log('adding artist to fav: ', id);
+  }
+
+  createAlbum(id: string) {
+    FavAlbumsDB.push(id);
+    console.log('adding album to fav: ', id);
   }
 
   findAll() {
-    return `This action returns all favs`;
+    const response = {
+      tracks: FavTracksDB.map((trackId) =>
+        DBs[Endpoints.TRACK].find((t) => t.id === trackId),
+      ),
+      artists: FavArtistsDB.map((artistId) =>
+        DBs[Endpoints.ARTIST].find((a) => a.id === artistId),
+      ),
+      albums: FavAlbumsDB.map((albumId) =>
+        DBs[Endpoints.ALBUM].find((a) => a.id === albumId),
+      ),
+    };
+
+    return response;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} fav`;
+  findFavTrack(id: string) {
+    return DBs[Endpoints.TRACK].find((t) => t.id === id);
   }
 
-  update(id: number, updateFavDto: UpdateFavDto) {
-    return `This action updates a #${id} fav`;
+  findFavArtist(id: string) {
+    return DBs[Endpoints.ARTIST].find((a) => a.id === id);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} fav`;
+  findFavAlbum(id: string) {
+    return DBs[Endpoints.ALBUM].find((a) => a.id === id);
+  }
+
+  removeTrack(id: string) {
+    FavTracksDB.splice(FavTracksDB.indexOf(id), 1);
+  }
+  
+  removeArtist(id: string) {
+    FavArtistsDB.splice(FavArtistsDB.indexOf(id), 1);
+  }
+
+  removeAlbum(id: string) {
+    FavAlbumsDB.splice(FavAlbumsDB.indexOf(id), 1);
   }
 }

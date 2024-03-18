@@ -237,8 +237,7 @@ describe('Album (e2e)', () => {
           year: 2021,
           artistId: createAlbumDto.artistId,
         });
-      console.log(response.body);
-      console.log(response.status);
+
       expect(response.status).toBe(StatusCodes.NOT_FOUND);
     });
   });
