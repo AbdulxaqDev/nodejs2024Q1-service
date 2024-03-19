@@ -24,6 +24,7 @@ export class FavsController {
     @Param('id') id: string,
     @Res() res: Response,
   ): Response<any, Record<string, any>> {
+    if (!id) return response(HttpStatus.UNPROCESSABLE_ENTITY, '', res);
     const isValidIdAndTrack = validateId(id, Endpoints.TRACK, res);
 
     if (isValidIdAndTrack) {
@@ -37,6 +38,7 @@ export class FavsController {
     @Param('id') id: string,
     @Res() res: Response,
   ): Response<any, Record<string, any>> {
+    if (!id) return response(HttpStatus.UNPROCESSABLE_ENTITY, '', res);
     const isValidIdAndArtist = validateId(id, Endpoints.ARTIST, res);
 
     if (isValidIdAndArtist) {
@@ -50,6 +52,7 @@ export class FavsController {
     @Param('id') id: string,
     @Res() res: Response,
   ): Response<any, Record<string, any>> {
+    if (!id) return response(HttpStatus.UNPROCESSABLE_ENTITY, '', res);
     const isValidIdAndAlbum = validateId(id, Endpoints.ALBUM, res);
 
     if (isValidIdAndAlbum) {

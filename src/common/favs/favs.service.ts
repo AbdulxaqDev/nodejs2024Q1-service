@@ -21,16 +21,37 @@ export class FavsService {
 
   findAll() {
     const response = {
-      tracks: FavTracksDB.map((trackId) =>
-        DBs[Endpoints.TRACK].find((t) => t.id === trackId),
-      ),
-      artists: FavArtistsDB.map((artistId) =>
-        DBs[Endpoints.ARTIST].find((a) => a.id === artistId),
-      ),
-      albums: FavAlbumsDB.map((albumId) =>
-        DBs[Endpoints.ALBUM].find((a) => a.id === albumId),
-      ),
+      tracks: [],
+      artists: [],
+      albums: [],
     };
+
+    FavTracksDB.forEach((trackId) => {
+      const track = DBs[Endpoints.TRACK].find((t) => t.id === trackId);
+      if (track) response.tracks.push(track);
+    });
+
+    FavArtistsDB.forEach((artistId) => {
+      const artist = DBs[Endpoints.ARTIST].find((t) => t.id === artistId);
+      if (artist) response.artists.push(artist);
+    });
+
+    FavAlbumsDB.forEach((albumId) => {
+      const album = DBs[Endpoints.ALBUM].find((t) => t.id === albumId);
+      if (album) response.albums.push(album);
+    });
+
+    // const response = {
+    //   tracks: FavTracksDB.map((trackId) =>
+    //     DBs[Endpoints.TRACK].find((t) => t.id === trackId),
+    //   ),
+    //   artists: FavArtistsDB.map((artistId) =>
+    //     DBs[Endpoints.ARTIST].find((a) => a.id === artistId),
+    //   ),
+    //   albums: FavAlbumsDB.map((albumId) =>
+    //     DBs[Endpoints.ALBUM].find((a) => a.id === albumId),
+    //   ),
+    // };
 
     return response;
   }
@@ -50,7 +71,7 @@ export class FavsService {
   removeTrack(id: string) {
     FavTracksDB.splice(FavTracksDB.indexOf(id), 1);
   }
-  
+
   removeArtist(id: string) {
     FavArtistsDB.splice(FavArtistsDB.indexOf(id), 1);
   }
