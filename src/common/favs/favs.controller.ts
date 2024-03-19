@@ -63,7 +63,7 @@ export class FavsController {
     return response(HttpStatus.OK, this.favsService.findAll(), res);
   }
 
-  @Delete(':id')
+  @Delete('track/:id')
   removeTrack(@Param('id') id: string, @Res() res: Response) {
     const isValidIdAndTrack = validateId(id, Endpoints.TRACK, res);
 
@@ -73,7 +73,7 @@ export class FavsController {
     }
   }
 
-  @Delete(':id')
+  @Delete('artist/:id')
   removeArtist(@Param('id') id: string, @Res() res: Response) {
     const isValidIdAndArtist = validateId(id, Endpoints.ARTIST, res);
 
@@ -83,7 +83,7 @@ export class FavsController {
     }
   }
 
-  @Delete(':id')
+  @Delete('album/:id')
   removeAlbum(@Param('id') id: string, @Res() res: Response) {
     const isValidIdAndAlbum = validateId(id, Endpoints.ALBUM, res);
 
