@@ -8,6 +8,7 @@ export function validateId(
   id: string | null,
   endPoint: Endpoints,
   res: Response,
+  isFavs: boolean = false,
 ) {
   if (validate(id)) {
     const db = DBs[endPoint];
@@ -15,11 +16,17 @@ export function validateId(
     if (item) {
       return item;
     } else {
-      response(
-        HttpStatus.NOT_FOUND,
-        `${endPoint.toUpperCase()} Not Found`,
-        res,
-      );
+      isFavs
+        ? response(
+            HttpStatus.UNPROCESSABLE_ENTITY,
+            `${endPoint.toUpperCase()} Not Found`,
+            res,
+          )
+        : response(
+            HttpStatus.NOT_FOUND,
+            `${endPoint.toUpperCase()} Not Found`,
+            res,
+          );
     }
   } else {
     response(

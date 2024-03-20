@@ -12,7 +12,7 @@ import { FavsService } from './favs.service';
 import { CreateFavDto } from './dto/create-fav.dto';
 import { validateId } from 'src/utils/id-validator.util';
 import { Response } from 'express';
-import { Endpoints } from 'src/entities/common.entity';
+import { DBs, Endpoints } from 'src/entities/common.entity';
 import { response } from 'src/utils/response.util';
 
 @Controller('favs')
@@ -24,8 +24,7 @@ export class FavsController {
     @Param('id') id: string,
     @Res() res: Response,
   ): Response<any, Record<string, any>> {
-    if (!id) return response(HttpStatus.UNPROCESSABLE_ENTITY, '', res);
-    const isValidIdAndTrack = validateId(id, Endpoints.TRACK, res);
+    const isValidIdAndTrack = validateId(id, Endpoints.TRACK, res, true);
 
     if (isValidIdAndTrack) {
       this.favsService.createTrack(id);
@@ -38,8 +37,7 @@ export class FavsController {
     @Param('id') id: string,
     @Res() res: Response,
   ): Response<any, Record<string, any>> {
-    if (!id) return response(HttpStatus.UNPROCESSABLE_ENTITY, '', res);
-    const isValidIdAndArtist = validateId(id, Endpoints.ARTIST, res);
+    const isValidIdAndArtist = validateId(id, Endpoints.ARTIST, res, true);
 
     if (isValidIdAndArtist) {
       this.favsService.createArtist(id);
@@ -52,8 +50,7 @@ export class FavsController {
     @Param('id') id: string,
     @Res() res: Response,
   ): Response<any, Record<string, any>> {
-    if (!id) return response(HttpStatus.UNPROCESSABLE_ENTITY, '', res);
-    const isValidIdAndAlbum = validateId(id, Endpoints.ALBUM, res);
+    const isValidIdAndAlbum = validateId(id, Endpoints.ALBUM, res, true);
 
     if (isValidIdAndAlbum) {
       this.favsService.createAlbum(id);
