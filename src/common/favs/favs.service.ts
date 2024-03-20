@@ -6,17 +6,14 @@ import { DBs, Endpoints } from 'src/entities/common.entity';
 export class FavsService {
   createTrack(id: string) {
     FavTracksDB.push(id);
-    console.log('adding track to fav: ', id);
   }
 
   createArtist(id: string) {
     FavArtistsDB.push(id);
-    console.log('adding artist to fav: ', id);
   }
 
   createAlbum(id: string) {
     FavAlbumsDB.push(id);
-    console.log('adding album to fav: ', id);
   }
 
   findAll() {
