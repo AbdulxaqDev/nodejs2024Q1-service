@@ -8,7 +8,7 @@ export function validateId(
   id: string | null,
   endPoint: Endpoints,
   res: Response,
-  isFavs: boolean = false,
+  isFavs = false,
 ) {
   if (validate(id)) {
     const db = DBs[endPoint];

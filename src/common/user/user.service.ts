@@ -30,6 +30,7 @@ export class UserService {
     const { password, ...userWithoutPassword } = UsersDB.find(
       (user) => user.id === id,
     );
+    password;
     return { ...userWithoutPassword };
   }
 
@@ -39,6 +40,7 @@ export class UserService {
     user.updatedAt = Date.now();
     user.version++;
     const { password, ...userWithoutPassword } = user;
+    password;
     return userWithoutPassword;
   }
 

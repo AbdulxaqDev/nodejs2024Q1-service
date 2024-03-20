@@ -38,18 +38,6 @@ export class FavsService {
       if (album) response.albums.push(album);
     });
 
-    // const response = {
-    //   tracks: FavTracksDB.map((trackId) =>
-    //     DBs[Endpoints.TRACK].find((t) => t.id === trackId),
-    //   ),
-    //   artists: FavArtistsDB.map((artistId) =>
-    //     DBs[Endpoints.ARTIST].find((a) => a.id === artistId),
-    //   ),
-    //   albums: FavAlbumsDB.map((albumId) =>
-    //     DBs[Endpoints.ALBUM].find((a) => a.id === albumId),
-    //   ),
-    // };
-
     return response;
   }
 

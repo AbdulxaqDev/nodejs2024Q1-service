@@ -2,17 +2,15 @@ import {
   Controller,
   Get,
   Post,
-  Body,
   Param,
   Delete,
   Res,
   HttpStatus,
 } from '@nestjs/common';
 import { FavsService } from './favs.service';
-import { CreateFavDto } from './dto/create-fav.dto';
 import { validateId } from 'src/utils/id-validator.util';
 import { Response } from 'express';
-import { DBs, Endpoints } from 'src/entities/common.entity';
+import { Endpoints } from 'src/entities/common.entity';
 import { response } from 'src/utils/response.util';
 
 @Controller('favs')

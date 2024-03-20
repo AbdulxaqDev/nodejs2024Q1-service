@@ -47,6 +47,7 @@ export class UserController {
 
     if (isValidIdAndUser) {
       const { password, ...userWithoutPassword } = isValidIdAndUser;
+      password;
       return response(HttpStatus.OK, userWithoutPassword, res);
     }
   }
