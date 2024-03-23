@@ -2,9 +2,10 @@ FROM node:lts-alpine
 
 WORKDIR /app
 
-COPY ./ ./
-
+COPY package*.json ./
 RUN npm run install
+
+COPY ./ ./
 RUN npm run build
 
 USER node
