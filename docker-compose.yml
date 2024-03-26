@@ -1,0 +1,16 @@
+version: '3'
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "4000:4000"  # Assuming your NestJS app runs on port 3000
+    depends_on:
+      - database
+  database:
+    build: ./database
+    ports:
+      - "5432:5432"  # PostgreSQL default port
+    environment:
+      POSTGRES_USER: example
+      POSTGRES_PASSWORD: example
+      POSTGRES_DB: example
