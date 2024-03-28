@@ -1,4 +1,4 @@
-FROM node:21.7.1-alpine3.19
+FROM node:20-bullseye
 
 WORKDIR /app
 
@@ -9,9 +9,5 @@ COPY ./ ./
 RUN npm run build
 
 USER node
-
-CMD ["npm", "run", "start:prod"]
-
-EXPOSE 4000
 
 

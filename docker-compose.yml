@@ -1,16 +1,17 @@
 version: '3'
 services:
-  backend:
-    build: ./backend
+  library_api:
+    build: ./
+    command:  ['npm', 'run', 'start:prod']
+    restart: on-failure
     ports:
-      - "4000:4000"  # Assuming your NestJS app runs on port 3000
+      - "4000:4000"
     depends_on:
-      - database
-  database:
-    build: ./database
+      - library_db
+  library_db:
+    image: postgres:alpine3.18
+    restart: on-failure
     ports:
-      - "5432:5432"  # PostgreSQL default port
+      - "5432:5432"
     environment:
-      POSTGRES_USER: example
-      POSTGRES_PASSWORD: example
-      POSTGRES_DB: example
+      - from ./.env
