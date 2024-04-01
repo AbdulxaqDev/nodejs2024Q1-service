@@ -36,3 +36,11 @@ model User {
   updatedAt Int
   version   Int
 }
+
+model Track {
+  id       String @unique
+  name     String @unique
+  duration Int
+  artistId String @unique
+  albumId  String @unique
+}
