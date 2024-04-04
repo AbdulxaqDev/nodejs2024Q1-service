@@ -1,4 +1,4 @@
-version: '3'
+version: '3.5'
 services:
   library_api:
     build: ./
@@ -15,5 +15,5 @@ services:
     restart: on-failure
     ports:
       - "5432:5432"
-    environment:
-      - from ./.env
+    env_file:
+      - .env
