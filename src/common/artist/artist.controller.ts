@@ -6,8 +6,6 @@ import {
   Param,
   Delete,
   HttpStatus,
-  HttpCode,
-  Header,
   Res,
   Put,
 } from '@nestjs/common';
@@ -24,50 +22,46 @@ export class ArtistController {
   constructor(private readonly artistService: ArtistService) {}
 
   @Post()
-  @HttpCode(HttpStatus.CREATED)
-  @Header('Content-Type', 'application/json')
-  create(@Body() createArtistDto: CreateArtistDto, @Res() res: Response) {
-    const createdArtist = this.artistService.create(createArtistDto);
+  async create(@Body() createArtistDto: CreateArtistDto, @Res() res: Response) {
+    const createdArtist = await this.artistService.create(createArtistDto);
     return response(HttpStatus.CREATED, createdArtist, res);
   }
 
   @Get()
-  @HttpCode(HttpStatus.OK)
-  @Header('Content-Type', 'application/json')
-  findAll() {
-    const artists = this.artistService.findAll();
-    return artists;
+  async findAll(@Res() res: Response) {
+    const artists = await this.artistService.findAll();
+    return response(HttpStatus.OK, artists, res);
   }
 
   @Get(':id')
-  @Header('Content-Type', 'application/json')
-  findOne(@Param('id') id: string, @Res() res: Response) {
-    const isValidIdAndArtist = validateId(id, Endpoints.ARTIST, res);
+  async findOne(@Param('id') id: string, @Res() res: Response) {
+    const isValidIdAndArtist = await validateId(id, Endpoints.ARTIST, res);
 
     if (isValidIdAndArtist) {
-      return response(HttpStatus.OK, isValidIdAndArtist, res);
+      const artist = await this.artistService.findOne(id);
+      return response(HttpStatus.OK, artist, res);
     }
   }
 
   @Put(':id')
-  update(
+  async update(
     @Param('id') id: string,
     @Body() updateArtistDto: UpdateArtistDto,
     @Res() res: Response,
   ) {
-    const isValidIdAndArtist = validateId(id, Endpoints.ARTIST, res);
+    const isValidIdAndArtist = await validateId(id, Endpoints.ARTIST, res);
     if (isValidIdAndArtist) {
-      const updatedArtist = this.artistService.update(id, updateArtistDto);
+      const updatedArtist = await this.artistService.update(id, updateArtistDto);
       return response(HttpStatus.OK, updatedArtist, res);
     }
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string, @Res() res: Response) {
-    const isValidIdAndArtist = validateId(id, Endpoints.ARTIST, res);
+  async remove(@Param('id') id: string, @Res() res: Response) {
+    const isValidIdAndArtist = await validateId(id, Endpoints.ARTIST, res);
 
     if (isValidIdAndArtist) {
-      this.artistService.remove(isValidIdAndArtist);
+      await this.artistService.remove(id);
       return response(HttpStatus.NO_CONTENT, null, res);
     }
   }
