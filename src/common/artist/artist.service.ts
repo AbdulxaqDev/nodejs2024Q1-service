@@ -2,15 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 import { DBs, Endpoints } from 'src/entities/common.entity';
-import { Artist } from './entities/artist.entity';
-import { Album } from '../album/entities/album.entity';
-import { Track } from '../track/entities/track.entity';
 
 @Injectable()
 export class ArtistService {
-  create(createArtistDto: CreateArtistDto) {
+  async create(createArtistDto: CreateArtistDto) {
     const { name, grammy } = createArtistDto;
-    const newArtist = DBs[Endpoints.ARTIST].create({
+    const newArtist = await DBs[Endpoints.ARTIST].create({
       data: new CreateArtistDto(name, grammy),
     });
 
@@ -26,8 +23,8 @@ export class ArtistService {
     return artist;
   }
 
-  update(id: string, updateArtistDto: UpdateArtistDto) {
-    const updatedArtist = DBs[Endpoints.ARTIST].update({
+  async update(id: string, updateArtistDto: UpdateArtistDto) {
+    const updatedArtist = await DBs[Endpoints.ARTIST].update({
       data: {
         name: updateArtistDto.name,
         grammy: updateArtistDto.grammy,
@@ -61,6 +58,6 @@ export class ArtistService {
         where: { artistId: id },
       });
     }
-    
+
   }
 }
