@@ -1,50 +1,95 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
+import { PrismaService } from '../../prisma.service';
+
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-user-password.dto';
-import { UsersDB } from 'src/db/db';
-import { User } from './entities/user.entity';
 import { DBs, Endpoints } from 'src/entities/common.entity';
 
 @Injectable()
 export class UserService {
-  create(createUserDto: CreateUserDto) {
+  constructor(private prisma: PrismaService) {}
+
+  async create(createUserDto: CreateUserDto) {
     const { login, password } = createUserDto;
-    const { password: uPassword, ...userWithoutPassword } = new CreateUserDto(
-      login,
-      password,
-    );
-    DBs[Endpoints.USER].push({ password: uPassword, ...userWithoutPassword });
-    return { ...userWithoutPassword };
+
+    try {
+      const { password: uPassword, ...newUser } = await DBs[
+        Endpoints.USER
+      ].create({ data: new CreateUserDto(login, password) });
+
+      return { status: HttpStatus.CREATED, newUser };
+    } catch (error) {
+      if (error.code === 'P2002') {
+        return {
+          status: HttpStatus.BAD_REQUEST,
+          error: `The ${error.meta.modelName} already exist with given ${error.meta.target}`,
+        };
+      } else {
+        return {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error: `Error occured while creating new ${error.meta.modelName}`,
+        };
+      }
+    }
   }
 
-  findAll() {
-    const users = UsersDB.map((user) => {
-      const { password, ...userWithoutPassword } = user;
-      password;
-      return { ...userWithoutPassword };
+  async findAll() {
+    const users = await DBs[Endpoints.USER].findMany({
+      select: {
+        id: true,
+        login: true,
+        version: true,
+        createdAt: true,
+        updatedAt: true,
+      },
     });
-    return JSON.stringify(users);
+    return users;
   }
 
   findOne(id: string) {
-    const { password, ...userWithoutPassword } = UsersDB.find(
-      (user) => user.id === id,
-    );
-    password;
-    return { ...userWithoutPassword };
+    const user = DBs[Endpoints.USER].findOne({
+      where: {
+        id,
+      },
+      select: {
+        id: true,
+        login: true,
+        version: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+    return user;
   }
 
-  update(id: string, updatePasswordDto: UpdatePasswordDto) {
-    const user = UsersDB.find((user) => user.id === id);
-    user.password = updatePasswordDto.newPassword;
-    user.updatedAt = Date.now();
-    user.version++;
-    const { password, ...userWithoutPassword } = user;
-    password;
-    return userWithoutPassword;
+  async update(
+    id: string,
+    updatePasswordDto: UpdatePasswordDto,
+    version: number,
+  ) {
+    const updatedUser = await DBs[Endpoints.USER].update({
+      data: {
+        password: updatePasswordDto.newPassword,
+        updatedAt: new Date().toString(),
+        version,
+      },
+      where: {
+        id,
+      },
+      select: {
+        id: true,
+        login: true,
+        version: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+    return updatedUser;
   }
 
-  remove(user: User) {
-    UsersDB.splice(UsersDB.indexOf(user), 1);
+  async remove(id: string): Promise<void> {
+    await DBs[Endpoints.USER].delete({
+      where: { id },
+    });
   }
 }
