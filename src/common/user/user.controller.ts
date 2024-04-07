@@ -5,8 +5,6 @@ import {
   Body,
   Param,
   Delete,
-  HttpCode,
-  Header,
   HttpStatus,
   Res,
   Put,
@@ -73,7 +71,7 @@ export class UserController {
 
     if (isValidIdAndUser) {
       await this.userService.remove(id);
-      return response(HttpStatus.NO_CONTENT, 'User deleted', res);
+      return response(HttpStatus.NO_CONTENT, null, res);
     }
   }
 }
