@@ -1,4 +1,4 @@
-import { PrismaService } from 'src/prisma.service';
+import { PrismaService } from 'src/services/prisma.service';
 
 const prisma: PrismaService = new PrismaService();
 
