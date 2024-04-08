@@ -6,10 +6,10 @@ export class LoggingMiddleware implements NestMiddleware {
   private readonly logger = new Logger();
 
   use(req: Request, res: Response, next: NextFunction) {
-    const { method, url, headers, body, query } = req;
+    const { method, url, headers, body, query, baseUrl} = req;
     const requestLog = {
       method,
-      url,
+      url: baseUrl,
       headers,
       body,
       query,
