@@ -14,7 +14,7 @@ export class LoggingMiddleware implements NestMiddleware {
       body,
       query,
     };
-    this.logger.log(JSON.stringify(requestLog, null, 4), 'Incoming Request'.toUpperCase());
+    this.logger.log(JSON.stringify(requestLog, null, 4), 'INCOMING REQUEST');
     next();
   }
 }

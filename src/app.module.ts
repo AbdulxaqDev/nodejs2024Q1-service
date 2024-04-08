@@ -7,6 +7,7 @@ import { ArtistModule } from './common/artist/artist.module';
 import { AlbumModule } from './common/album/album.module';
 import { FavsModule } from './common/favs/favs.module';
 import { LoggingMiddleware } from './middlewares/logging.middleware';
+import { ErrorLoggingMiddleware } from './middlewares/error-logging.middleware';
 
 @Module({
   imports: [UserModule, TrackModule, ArtistModule, AlbumModule, FavsModule],
@@ -16,5 +17,6 @@ import { LoggingMiddleware } from './middlewares/logging.middleware';
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(LoggingMiddleware).forRoutes('*');
+    consumer.apply(ErrorLoggingMiddleware).forRoutes('*');
   }
 }

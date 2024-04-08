@@ -63,11 +63,3 @@ model Favorites {
   trackId  String  @unique
   track    Track?  @relation(fields: [trackId], references: [id])
 }
-
-model Track {
-  id       String @unique
-  name     String @unique
-  duration Int
-  artistId String @unique
-  albumId  String @unique
-}
