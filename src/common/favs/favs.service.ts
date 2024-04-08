@@ -1,67 +1,92 @@
 import { Injectable } from '@nestjs/common';
-import { FavAlbumsDB, FavArtistsDB, FavTracksDB } from 'src/db/db';
 import { DBs, Endpoints } from 'src/entities/common.entity';
 
 @Injectable()
 export class FavsService {
-  createTrack(id: string) {
-    FavTracksDB.push(id);
+  async createTrack(id: string) {
+    return await DBs[Endpoints.TRACK].update({
+      data: {
+        fav: true,
+      },
+      where: {
+        id,
+      },
+    });
   }
 
-  createArtist(id: string) {
-    FavArtistsDB.push(id);
+  async createArtist(id: string) {
+    return await DBs[Endpoints.ARTIST].update({
+      data: {
+        fav: true,
+      },
+      where: {
+        id,
+      },
+    });
   }
 
-  createAlbum(id: string) {
-    FavAlbumsDB.push(id);
+  async createAlbum(id: string) {
+    return await DBs[Endpoints.ALBUM].update({
+      data: {
+        fav: true,
+      },
+      where: {
+        id,
+      },
+    });
   }
 
-  findAll() {
-    const response = {
-      tracks: [],
-      artists: [],
-      albums: [],
+  async removeTrack(id: string) {
+    return await DBs[Endpoints.TRACK].update({
+      data: {
+        fav: false,
+      },
+      where: {
+        id,
+      },
+    });
+  }
+
+  async removeArtist(id: string) {
+    return await DBs[Endpoints.ARTIST].update({
+      data: {
+        fav: false,
+      },
+      where: {
+        id,
+      },
+    });
+  }
+
+  async removeAlbum(id: string) {
+    return await DBs[Endpoints.ALBUM].update({
+      data: {
+        fav: false,
+      },
+      where: {
+        id,
+      },
+    });
+  }
+
+  async findAll() {
+    const getFavs = {
+      where: { fav: true },
+      select: { id: true },
     };
 
-    FavTracksDB.forEach((trackId) => {
-      const track = DBs[Endpoints.TRACK].find((t) => t.id === trackId);
-      if (track) response.tracks.push(track);
-    });
+    const tracks = await DBs[Endpoints.TRACK].findMany(getFavs);
+    const artists = await DBs[Endpoints.ARTIST].findMany(getFavs);
+    const albums = await DBs[Endpoints.ALBUM].findMany(getFavs);
 
-    FavArtistsDB.forEach((artistId) => {
-      const artist = DBs[Endpoints.ARTIST].find((t) => t.id === artistId);
-      if (artist) response.artists.push(artist);
-    });
+    const trackIds = tracks.map((track) => track.id);
+    const artistIds = artists.map((artist) => artist.id);
+    const albumIds = albums.map((album) => album.id);
 
-    FavAlbumsDB.forEach((albumId) => {
-      const album = DBs[Endpoints.ALBUM].find((t) => t.id === albumId);
-      if (album) response.albums.push(album);
-    });
-
-    return response;
-  }
-
-  findFavTrack(id: string) {
-    return DBs[Endpoints.TRACK].find((t) => t.id === id);
-  }
-
-  findFavArtist(id: string) {
-    return DBs[Endpoints.ARTIST].find((a) => a.id === id);
-  }
-
-  findFavAlbum(id: string) {
-    return DBs[Endpoints.ALBUM].find((a) => a.id === id);
-  }
-
-  removeTrack(id: string) {
-    FavTracksDB.splice(FavTracksDB.indexOf(id), 1);
-  }
-
-  removeArtist(id: string) {
-    FavArtistsDB.splice(FavArtistsDB.indexOf(id), 1);
-  }
-
-  removeAlbum(id: string) {
-    FavAlbumsDB.splice(FavAlbumsDB.indexOf(id), 1);
+    return {
+      tracks: trackIds,
+      artists: artistIds,
+      albums: albumIds,
+    };
   }
 }
