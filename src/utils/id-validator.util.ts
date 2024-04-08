@@ -4,15 +4,19 @@ import { response } from './response.util';
 import { HttpStatus } from '@nestjs/common';
 import { Response } from 'express';
 
-export function validateId(
+export async function validateId(
   id: string | null,
   endPoint: Endpoints,
   res: Response,
-  isFavs = false,
+  isFavs: boolean = false,
 ) {
   if (validate(id)) {
-    const db = DBs[endPoint];
-    const item = db.find((i) => i.id === id);
+    const item = await DBs[endPoint].findUnique({
+      where: {
+        id,
+      },
+    });
+
     if (item) {
       return item;
     } else {

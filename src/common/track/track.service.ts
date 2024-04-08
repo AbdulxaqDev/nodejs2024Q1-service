@@ -6,34 +6,39 @@ import { Track } from './entities/track.entity';
 
 @Injectable()
 export class TrackService {
-  create(createTrackDto: CreateTrackDto) {
+  async create(createTrackDto: CreateTrackDto) {
     const { name, artistId, albumId, duration } = createTrackDto;
-    const newTrack = new CreateTrackDto(name, artistId, albumId, duration);
-    DBs[Endpoints.TRACK].push(newTrack);
+    const newTrack = await DBs[Endpoints.TRACK].create({
+      data: new CreateTrackDto(name, artistId, albumId, duration),
+    });
+
     return newTrack;
   }
 
-  findAll() {
-    return DBs[Endpoints.TRACK];
+  async findAll() {
+    return await DBs[Endpoints.TRACK].findMany();
   }
 
-  findOne(id: string) {
-    const track = DBs[Endpoints.TRACK].find((t) => t.id === id);
-    return track;
+  async findOne(id: string) {
+    return await DBs[Endpoints.TRACK].findUnique({ where: { id } });
   }
 
-  update(id: string, updateTrackDto: UpdateTrackDto) {
-    const track: Track = DBs[Endpoints.TRACK].find((t) => t.id === id);
+  async update(id: string, updateTrackDto: UpdateTrackDto) {
     const { name, artistId, albumId, duration } = updateTrackDto;
-    track.name = name;
-    track.artistId = artistId;
-    track.albumId = albumId;
-    track.duration = duration;
-    return track;
+    const updatedTrack = await DBs[Endpoints.TRACK].update({
+      data: {
+        name,
+        artistId,
+        albumId,
+        duration,
+      },
+      where: { id },
+    });
+
+    return updatedTrack;
   }
 
-  remove(track: Track) {
-    const trackDb = DBs[Endpoints.TRACK];
-    trackDb.splice(trackDb.indexOf(track), 1);
+  async remove(id: string) {
+    await await DBs[Endpoints.TRACK].delete({where: {id}});
   }
 }

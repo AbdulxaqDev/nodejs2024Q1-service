@@ -1,4 +1,9 @@
-version: '3'
+version: '3.5'
+
+networks:
+  link_network:
+    driver: bridge
+
 services:
   library_api:
     build: ./
@@ -9,11 +14,15 @@ services:
       - "4000:4000"
     depends_on:
       - library_db
+    networks:
+      - link_network
   library_db:
     image: postgres:alpine3.18
     container_name: library_db
     restart: on-failure
     ports:
       - "5432:5432"
-    environment:
-      - from ./.env
+    networks:
+      - link_network
+    env_file:
+      - .env

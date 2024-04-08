@@ -22,50 +22,57 @@ export class AlbumController {
   constructor(private readonly albumService: AlbumService) {}
 
   @Post()
-  create(@Body() createAlbumDto: CreateAlbumDto, @Res() res: Response) {
+  async create(@Body() createAlbumDto: CreateAlbumDto, @Res() res: Response) {
     const isValidIdAndArtist =
       createAlbumDto.artistId === null
         ? true
-        : validateId(createAlbumDto.artistId, Endpoints.ARTIST, res);
+        : await validateId(createAlbumDto.artistId, Endpoints.ARTIST, res);
 
     if (isValidIdAndArtist) {
-      const createdAlbum = this.albumService.create(createAlbumDto);
+      const createdAlbum = await this.albumService.create(createAlbumDto);
       return response(HttpStatus.CREATED, createdAlbum, res);
     }
   }
 
   @Get()
-  findAll() {
-    return this.albumService.findAll();
+  async findAll() {
+    return await this.albumService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string, @Res() res: Response) {
-    const isValidIdAndAlbum = validateId(id, Endpoints.ALBUM, res);
-    if (isValidIdAndAlbum)
-      return response(HttpStatus.OK, this.albumService.findOne(id), res);
+  async findOne(@Param('id') id: string, @Res() res: Response) {
+    const isValidIdAndAlbum = await validateId(id, Endpoints.ALBUM, res);
+    if (isValidIdAndAlbum) {
+      const album = await this.albumService.findOne(id);
+      return response(HttpStatus.OK, album, res);
+    }
   }
 
   @Put(':id')
-  update(
+  async update(
     @Param('id') id: string,
     @Body() updateAlbumDto: UpdateAlbumDto,
     @Res() res: Response,
   ) {
-    const isValidIdAndAlbum = validateId(id, Endpoints.ALBUM, res);
+    const isValidIdAndAlbum = await validateId(id, Endpoints.ALBUM, res);
+    const isValidIdAndArtist = await validateId(
+      updateAlbumDto.artistId,
+      Endpoints.ARTIST,
+      res,
+    );
 
-    if (isValidIdAndAlbum) {
-      const updatedAlbum = this.albumService.update(id, updateAlbumDto);
+    if (isValidIdAndAlbum && isValidIdAndArtist) {
+      const updatedAlbum = await this.albumService.update(id, updateAlbumDto);
       return response(HttpStatus.OK, updatedAlbum, res);
     }
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string, @Res() res: Response) {
-    const isValidIdAndAlbum = validateId(id, Endpoints.ALBUM, res);
+  async remove(@Param('id') id: string, @Res() res: Response) {
+    const isValidIdAndAlbum = await validateId(id, Endpoints.ALBUM, res);
 
     if (isValidIdAndAlbum) {
-      this.albumService.remove(isValidIdAndAlbum);
+      await this.albumService.remove(id);
       return response(HttpStatus.NO_CONTENT, null, res);
     }
   }
