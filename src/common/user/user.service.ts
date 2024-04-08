@@ -13,9 +13,15 @@ export class UserService {
     const { login, password } = createUserDto;
 
     try {
-      const { password: uPassword, ...newUser } = await DBs[
+      const newUser = await DBs[
         Endpoints.USER
-      ].create({ data: new CreateUserDto(login, password) });
+      ].create({ data: new CreateUserDto(login, password) , select: {
+        id: true,
+        login: true,
+        createdAt: true,
+        updatedAt: true,
+        version: true,
+      }});
 
       return { status: HttpStatus.CREATED, newUser };
     } catch (error) {

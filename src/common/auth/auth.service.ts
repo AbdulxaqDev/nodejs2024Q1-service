@@ -19,7 +19,16 @@ export class AuthService {
     const hashedPassword = await this.bcryptService.hashPassword(password);
     const newUser = new CreateUserSignupDto(login, hashedPassword);
 
-    return await DBs[Endpoints.USER].create({ data: newUser });
+    return await DBs[Endpoints.USER].create({
+      data: newUser,
+      select: {
+        id: true,
+        login: true,
+        createdAt: true,
+        updatedAt: true,
+        version: true,
+      },
+    });
   }
 
   async login(createUserLoginDto: CreateUserLoginDto) {
