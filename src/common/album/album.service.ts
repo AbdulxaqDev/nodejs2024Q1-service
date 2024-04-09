@@ -2,47 +2,61 @@ import { Injectable } from '@nestjs/common';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 import { DBs, Endpoints } from 'src/entities/common.entity';
-import { Album } from './entities/album.entity';
-import { Track } from '../track/entities/track.entity';
 
 @Injectable()
 export class AlbumService {
   create(createAlbumDto: CreateAlbumDto) {
     const { name, year, artistId } = createAlbumDto;
-    const newAlbum = new CreateAlbumDto(name, year, artistId);
+    const newAlbum = DBs[Endpoints.ALBUM].create({
+      data: new CreateAlbumDto(name, year, artistId),
+    });
 
-    DBs[Endpoints.ALBUM].push(newAlbum);
     return newAlbum;
   }
 
-  findAll() {
-    return DBs[Endpoints.ALBUM];
+  async findAll() {
+    return await DBs[Endpoints.ALBUM].findMany();
   }
 
-  findOne(id: string): Album {
-    const album = DBs[Endpoints.ALBUM].find((a) => a.id === id);
+  async findOne(id: string) {
+    const album = DBs[Endpoints.ALBUM].findUnique({
+      where: {
+        id,
+      },
+    });
     return album;
   }
 
-  update(id: string, updateAlbumDto: UpdateAlbumDto) {
+  async update(id: string, updateAlbumDto: UpdateAlbumDto) {
     const { name, year, artistId } = updateAlbumDto;
-    const album = this.findOne(id);
-    album.name = name;
-    album.year = year;
-    album.artistId = artistId;
+    const updatedAlbum = DBs[Endpoints.ALBUM].update({
+      data: {
+        name,
+        year,
+        artistId,
+      },
+      where: {
+        id,
+      },
+    });
 
-    return album;
+    return updatedAlbum;
   }
 
-  remove(album: Album) {
-    const albumDb = DBs[Endpoints.ALBUM];
+  async remove(id: string): Promise<void> {
+    await DBs[Endpoints.ALBUM].delete({
+      where: { id },
+    });
 
-    const artistFromTrack: Track = DBs[Endpoints.TRACK].find(
-      (track) => track.albumId === album.id,
-    );
+    const track = await DBs[Endpoints.TRACK].findFirst({
+      where: { albumId: id },
+    });
 
-    if (artistFromTrack) artistFromTrack.albumId = null;
-
-    albumDb.splice(albumDb.indexOf(album), 1);
+    if (track) {
+      await DBs[Endpoints.TRACK].update({
+        data: { albumId: null },
+        where: { albumId: id },
+      });
+    }
   }
 }

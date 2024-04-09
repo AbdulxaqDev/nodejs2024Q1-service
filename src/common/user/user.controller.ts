@@ -5,8 +5,6 @@ import {
   Body,
   Param,
   Delete,
-  HttpCode,
-  Header,
   HttpStatus,
   Res,
   Put,
@@ -26,42 +24,40 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post()
-  @HttpCode(HttpStatus.CREATED)
-  @Header('Content-Type', 'application/json')
-  create(@Body() createUserDto: CreateUserDto, @Res() res: Response) {
-    const createdUser = this.userService.create(createUserDto);
-    return response(HttpStatus.CREATED, createdUser, res);
+  async create(@Body() createUserDto: CreateUserDto, @Res() res: Response) {
+    const user = await this.userService.create(createUserDto);
+    if (user.error) {
+      return response(user.status, user.error, res);
+    }
+    return response(user.status, user.newUser, res);
   }
 
   @Get()
-  @HttpCode(HttpStatus.OK)
-  @Header('Content-Type', 'application/json')
-  findAll() {
-    return this.userService.findAll();
+  async findAll(@Res() res: Response) {
+    const users = await this.userService.findAll();
+    return response(HttpStatus.OK, users, res);
   }
 
   @Get(':id')
-  @Header('Content-Type', 'application/json')
-  findOne(@Param('id') id: string, @Res() res: Response) {
-    const isValidIdAndUser = validateId(id, Endpoints.USER, res);
+  async findOne(@Param('id') id: string, @Res() res: Response) {
+    const isValidIdAndUser = await validateId(id, Endpoints.USER, res);
 
     if (isValidIdAndUser) {
-      const { password, ...userWithoutPassword } = isValidIdAndUser;
-      return response(HttpStatus.OK, userWithoutPassword, res);
+      return response(HttpStatus.OK, isValidIdAndUser, res);
     }
   }
 
   @Put(':id')
-  update(
+  async update(
     @Param('id') id: string,
     @Body() updatePasswordDto: UpdatePasswordDto,
     @Res() res: Response,
   ) {
-    const isValidIdAndUser = validateId(id, Endpoints.USER, res);
+    const isValidIdAndUser = await validateId(id, Endpoints.USER, res);
 
     if (isValidIdAndUser) {
       if (isValidIdAndUser.password === updatePasswordDto.oldPassword) {
-        const updatedUser = this.userService.update(id, updatePasswordDto);
+        const updatedUser = await this.userService.update(id, updatePasswordDto, isValidIdAndUser.version + 1);
         return response(HttpStatus.OK, updatedUser, res);
       } else if (isValidIdAndUser.password !== updatePasswordDto.oldPassword) {
         return response(HttpStatus.FORBIDDEN, 'Wrong Password', res);
@@ -70,12 +66,12 @@ export class UserController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string, @Res() res: Response) {
-    const isValidIdAndUser = validateId(id, Endpoints.USER, res);
+  async remove(@Param('id') id: string, @Res() res: Response) {
+    const isValidIdAndUser = await validateId(id, Endpoints.USER, res);
 
     if (isValidIdAndUser) {
-      this.userService.remove(isValidIdAndUser);
-      return response(HttpStatus.NO_CONTENT, 'User deleted', res);
+      await this.userService.remove(id);
+      return response(HttpStatus.NO_CONTENT, null, res);
     }
   }
 }

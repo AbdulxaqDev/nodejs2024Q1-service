@@ -1,4 +1,6 @@
-import { AlbumsDB, ArtistsDB, TracksDB, UsersDB } from 'src/db/db';
+import { PrismaService } from 'src/prisma.service';
+
+const prisma: PrismaService = new PrismaService();
 
 export enum Endpoints {
   USER = 'user',
@@ -7,9 +9,9 @@ export enum Endpoints {
   ALBUM = 'album',
 }
 
-export const DBs: Record<Endpoints, any[]> = {
-  [Endpoints.USER]: UsersDB,
-  [Endpoints.ARTIST]: ArtistsDB,
-  [Endpoints.TRACK]: TracksDB,
-  [Endpoints.ALBUM]: AlbumsDB,
+export const DBs: Record<Endpoints, any> = {
+  [Endpoints.USER]: prisma.user,
+  [Endpoints.ARTIST]: prisma.artist,
+  [Endpoints.TRACK]: prisma.track,
+  [Endpoints.ALBUM]: prisma.album,
 };

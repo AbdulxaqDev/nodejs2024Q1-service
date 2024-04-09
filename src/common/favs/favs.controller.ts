@@ -2,17 +2,15 @@ import {
   Controller,
   Get,
   Post,
-  Body,
   Param,
   Delete,
   Res,
   HttpStatus,
 } from '@nestjs/common';
 import { FavsService } from './favs.service';
-import { CreateFavDto } from './dto/create-fav.dto';
 import { validateId } from 'src/utils/id-validator.util';
 import { Response } from 'express';
-import { DBs, Endpoints } from 'src/entities/common.entity';
+import { Endpoints } from 'src/entities/common.entity';
 import { response } from 'src/utils/response.util';
 
 @Controller('favs')
@@ -20,76 +18,72 @@ export class FavsController {
   constructor(private readonly favsService: FavsService) {}
 
   @Post('track/:id')
-  createTrack(
-    @Param('id') id: string,
-    @Res() res: Response,
-  ): Response<any, Record<string, any>> {
-    const isValidIdAndTrack = validateId(id, Endpoints.TRACK, res, true);
+  async createTrack(@Param('id') id: string, @Res() res: Response) {
+    const isValidIdAndTrack = await validateId(id, Endpoints.TRACK, res, true);
 
     if (isValidIdAndTrack) {
-      this.favsService.createTrack(id);
-      return response(HttpStatus.CREATED, isValidIdAndTrack, res);
+      const favTrack = await this.favsService.createTrack(id);
+      return response(HttpStatus.CREATED, favTrack, res);
     }
   }
 
   @Post('artist/:id')
-  createArtist(
-    @Param('id') id: string,
-    @Res() res: Response,
-  ): Response<any, Record<string, any>> {
-    const isValidIdAndArtist = validateId(id, Endpoints.ARTIST, res, true);
+  async createArtist(@Param('id') id: string, @Res() res: Response) {
+    const isValidIdAndArtist = await validateId(
+      id,
+      Endpoints.ARTIST,
+      res,
+      true,
+    );
 
     if (isValidIdAndArtist) {
-      this.favsService.createArtist(id);
-      return response(HttpStatus.CREATED, isValidIdAndArtist, res);
+      const favArtist = await this.favsService.createArtist(id);
+      return response(HttpStatus.CREATED, favArtist, res);
     }
   }
 
   @Post('album/:id')
-  createAlbum(
-    @Param('id') id: string,
-    @Res() res: Response,
-  ): Response<any, Record<string, any>> {
-    const isValidIdAndAlbum = validateId(id, Endpoints.ALBUM, res, true);
+  async createAlbum(@Param('id') id: string, @Res() res: Response) {
+    const isValidIdAndAlbum = await validateId(id, Endpoints.ALBUM, res, true);
 
     if (isValidIdAndAlbum) {
-      this.favsService.createAlbum(id);
-      return response(HttpStatus.CREATED, isValidIdAndAlbum, res);
+      const favAlbum = this.favsService.createAlbum(id);
+      return response(HttpStatus.CREATED, favAlbum, res);
     }
   }
 
-  @Get()
-  findAll(@Res() res: Response) {
-    return response(HttpStatus.OK, this.favsService.findAll(), res);
-  }
-
   @Delete('track/:id')
-  removeTrack(@Param('id') id: string, @Res() res: Response) {
-    const isValidIdAndTrack = validateId(id, Endpoints.TRACK, res);
+  async removeTrack(@Param('id') id: string, @Res() res: Response) {
+    const isValidIdAndTrack = await validateId(id, Endpoints.TRACK, res, true);
 
     if (isValidIdAndTrack) {
-      this.favsService.removeTrack(id);
-      return response(HttpStatus.NO_CONTENT, 'Deleted', res);
+      await this.favsService.removeTrack(id);
+      return response(HttpStatus.NO_CONTENT, null, res);
     }
   }
 
   @Delete('artist/:id')
-  removeArtist(@Param('id') id: string, @Res() res: Response) {
-    const isValidIdAndArtist = validateId(id, Endpoints.ARTIST, res);
+  async removeArtist(@Param('id') id: string, @Res() res: Response) {
+    const isValidIdAndArtist = await validateId(id, Endpoints.ARTIST, res, true);
 
     if (isValidIdAndArtist) {
-      this.favsService.removeArtist(id);
-      return response(HttpStatus.NO_CONTENT, 'Deleted', res);
+      await this.favsService.removeArtist(id);
+      return response(HttpStatus.NO_CONTENT, null, res);
     }
   }
 
   @Delete('album/:id')
-  removeAlbum(@Param('id') id: string, @Res() res: Response) {
-    const isValidIdAndAlbum = validateId(id, Endpoints.ALBUM, res);
+  async removeAlbum(@Param('id') id: string, @Res() res: Response) {
+    const isValidIdAndAlbum = await validateId(id, Endpoints.ALBUM, res, true);
 
     if (isValidIdAndAlbum) {
-      this.favsService.removeAlbum(id);
-      return response(HttpStatus.NO_CONTENT, 'Deleted', res);
+      await this.favsService.removeAlbum(id);
+      return response(HttpStatus.NO_CONTENT, null, res);
     }
+  }
+
+  @Get()
+  async findAll(@Res() res: Response) {
+    return response(HttpStatus.OK, await this.favsService.findAll(), res);
   }
 }

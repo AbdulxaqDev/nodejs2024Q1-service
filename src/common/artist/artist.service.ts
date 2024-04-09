@@ -2,48 +2,62 @@ import { Injectable } from '@nestjs/common';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 import { DBs, Endpoints } from 'src/entities/common.entity';
-import { Artist } from './entities/artist.entity';
-import { Album } from '../album/entities/album.entity';
-import { Track } from '../track/entities/track.entity';
 
 @Injectable()
 export class ArtistService {
-  create(createArtistDto: CreateArtistDto) {
+  async create(createArtistDto: CreateArtistDto) {
     const { name, grammy } = createArtistDto;
-    const newArtist = new CreateArtistDto(name, grammy);
-
-    DBs[Endpoints.ARTIST].push(newArtist);
+    const newArtist = await DBs[Endpoints.ARTIST].create({
+      data: new CreateArtistDto(name, grammy),
+    });
 
     return newArtist;
   }
 
-  findAll() {
-    return DBs[Endpoints.ARTIST];
+  async findAll() {
+    return await DBs[Endpoints.ARTIST].findMany();
   }
 
-  findOne(id: string) {
-    return `This action returns a #${id} artist`;
-  }
-
-  update(id: string, updateArtistDto: UpdateArtistDto) {
-    const artist = DBs[Endpoints.ARTIST].find((u) => u.id === id);
-    artist.name = updateArtistDto.name;
-    artist.grammy = updateArtistDto.grammy;
+  async findOne(id: string) {
+    const artist = DBs[Endpoints.ARTIST].findUnique({ where: { id } });
     return artist;
   }
 
-  remove(artist: Artist) {
-    const artistsDb = DBs[Endpoints.ARTIST];
-    const artistFromAlbum: Album = DBs[Endpoints.ALBUM].find(
-      (album) => album.artistId === artist.id,
-    );
-    const artistFromTrack: Track = DBs[Endpoints.TRACK].find(
-      (track) => track.artistId === artist.id,
-    );
+  async update(id: string, updateArtistDto: UpdateArtistDto) {
+    const updatedArtist = await DBs[Endpoints.ARTIST].update({
+      data: {
+        name: updateArtistDto.name,
+        grammy: updateArtistDto.grammy,
+      },
+      where: { id },
+    });
+    return updatedArtist;
+  }
 
-    if (artistFromAlbum) artistFromAlbum.artistId = null;
-    if (artistFromTrack) artistFromTrack.artistId = null;
+  async remove(id: string) {
+    await DBs[Endpoints.ARTIST].delete({ where: { id } });
 
-    artistsDb.splice(artistsDb.indexOf(artist), 1);
+    const album = await DBs[Endpoints.ALBUM].findFirst({
+      where: { artistId: id },
+    });
+
+    const track = await DBs[Endpoints.TRACK].findFirst({
+      where: { artistId: id },
+    });
+
+    if (album) {
+      await DBs[Endpoints.ALBUM].update({
+        data: { artistId: null },
+        where: { artistId: id },
+      });
+    }
+
+    if (track) {
+      await DBs[Endpoints.TRACK].update({
+        data: { artistId: null },
+        where: { artistId: id },
+      });
+    }
+
   }
 }
